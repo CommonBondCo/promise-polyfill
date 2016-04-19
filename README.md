@@ -2,6 +2,10 @@
     <img src="http://promises-aplus.github.com/promises-spec/assets/logo-small.png"
          align="right" alt="Promises/A+ logo" />
 </a>
+
+**NOTE: This is a modified version of the Promise library it was forked from. It preserves a lot of the original intent of the upstream source, without the `_setImmediateFn` or `_onUnhandledRejection`
+support. Thus, A+ tests surrounding this functionality will fail.**
+
 # Promise
 [![travis][travis-image]][travis-url]
 

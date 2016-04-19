@@ -1,32 +1,6 @@
 (function (root) {
 
-  // Store setTimeout reference so promise-polyfill will be unaffected by
-  // other code modifying setTimeout (like sinon.useFakeTimers())
-  var setTimeoutFunc = setTimeout;
-
-  function noop() {
-  }
-
-  // Use polyfill for setImmediate for performance gains
-  var asap = (typeof setImmediate === 'function' && setImmediate) ||
-    function (fn) {
-      setTimeoutFunc(fn, 1);
-    };
-
-  var onUnhandledRejection = function onUnhandledRejection(err) {
-    console.warn('Possible Unhandled Promise Rejection:', err); // eslint-disable-line no-console
-  };
-
-  // Polyfill for Function.prototype.bind
-  function bind(fn, thisArg) {
-    return function () {
-      fn.apply(thisArg, arguments);
-    };
-  }
-
-  var isArray = Array.isArray || function (value) {
-    return Object.prototype.toString.call(value) === '[object Array]';
-  };
+  function noop() {}
 
   function Promise(fn) {
     if (typeof this !== 'object') throw new TypeError('Promises must be constructed via new');
@@ -48,7 +22,7 @@
       return;
     }
     self._handled = true;
-    asap(function () {
+    setTimeout(function () {
       var cb = self._state === 1 ? deferred.onFulfilled : deferred.onRejected;
       if (cb === null) {
         (self._state === 1 ? resolve : reject)(deferred.promise, self._value);
@@ -77,7 +51,7 @@
           finale(self);
           return;
         } else if (typeof then === 'function') {
-          doResolve(bind(then, newValue), self);
+          doResolve(then.bind(newValue), self);
           return;
         }
       }
@@ -96,14 +70,6 @@
   }
 
   function finale(self) {
-    if (self._state === 2 && self._deferreds.length === 0) {
-      setTimeout(function() {
-        if (!self._handled) {
-          onUnhandledRejection(self._value);
-        }
-      }, 1);
-    }
-
     for (var i = 0, len = self._deferreds.length; i < len; i++) {
       handle(self, self._deferreds[i]);
     }
@@ -152,7 +118,7 @@
   };
 
   Promise.all = function () {
-    var args = Array.prototype.slice.call(arguments.length === 1 && isArray(arguments[0]) ? arguments[0] : arguments);
+    var args = Array.prototype.slice.call(arguments.length === 1 && Array.isArray(arguments[0]) ? arguments[0] : arguments);
 
     return new Promise(function (resolve, reject) {
       if (args.length === 0) return resolve([]);
@@ -208,23 +174,9 @@
     });
   };
 
-  /**
-   * Set the immediate function to execute callbacks
-   * @param fn {function} Function to execute
-   * @private
-   */
-  Promise._setImmediateFn = function _setImmediateFn(fn) {
-    asap = fn;
-  };
-
-  Promise._setUnhandledRejectionFn = function _setUnhandledRejectionFn(fn) {
-    onUnhandledRejection = fn;
-  };
-
   if (typeof module !== 'undefined' && module.exports) {
     module.exports = Promise;
   } else if (!root.Promise) {
     root.Promise = Promise;
   }
-
 })(this);
