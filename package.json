@@ -1,7 +1,11 @@
 {
   "name": "promise-polyfill",
-  "version": "4.1.1",
+  "version": "5.1.1",
   "description": "Lightweight promise polyfill. A+ compliant",
+  "contributors": [
+    "Taylor Hakes"
+    "CommonBond"
+  ],
   "main": "promise.js",
   "scripts": {
     "test": "eslint promise.js && mocha && karma start --single-run"
@@ -10,7 +14,6 @@
     "type": "git",
     "url": "https://github.com/CommonBondCo/promise-polyfill.git"
   },
-  "author": "Taylor Hakes",
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/CommonBondCo/promise-polyfill/issues"
