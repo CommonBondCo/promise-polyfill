@@ -2,6 +2,7 @@
   "name": "promise-polyfill",
   "version": "4.1.1",
   "description": "Lightweight promise polyfill. A+ compliant",
+  "author": "CommonBond",
   "main": "promise.js",
   "scripts": {
     "test": "eslint promise.js && mocha && karma start --single-run"
